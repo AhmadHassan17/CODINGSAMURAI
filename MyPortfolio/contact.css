@@ -1,0 +1,121 @@
+/* General Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #0b1120;
+  color: #fff;
+}
+
+/* Navbar Styles */
+.custom-nav {
+  background: transparent;
+}
+
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.navbar-nav .nav-link {
+  color: #fff;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #00bfff;
+}
+
+/* Ensuring horizontal layout on larger screens */
+.navbar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 15px; /* Spacing between links */
+}
+
+/* Hide the default checkbox */
+#menu-toggle {
+  display: none;
+}
+
+/* Menu icon for mobile */
+.menu-icon {
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+  display: none;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+}
+
+/* Responsive Navbar for Mobile */
+@media (max-width: 992px) {
+  .navbar-nav {
+    display: none;
+    flex-direction: column;
+    background-color: #0b1120;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 60px;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  /* When checkbox is checked, show menu */
+  #menu-toggle:checked ~ .navbar-nav {
+    display: flex;
+  }
+
+  .menu-icon {
+    display: block;
+  }
+}
+
+/* Contact Section */
+.contact-section {
+  max-width: 800px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.contact-section h2 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.contact-section h2 span {
+  color: #00bfff;
+}
+
+.form-control {
+  background: transparent;
+  border: 2px solid #00bfff;
+  color: #ffffff;
+}
+
+.form-control::placeholder {
+  color: #ffffff;
+}
+
+.form-control:focus {
+  background: transparent;
+  border-color: #00bfff;
+  box-shadow: none;
+}
+
+.send-btn {
+  background: #00bfff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.send-btn:hover {
+  background: #009acb;
+}
