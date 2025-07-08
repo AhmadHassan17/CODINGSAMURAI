@@ -29,11 +29,14 @@ To view this portfolio on your local machine:
 
 2. **Navigate to the directory**:
 
-   ```cd Portfolio
+   ```bash
+   cd Portfolio
 
 3. Open the home.html file in your browser:
 
-    ```start index.html # For Windows
+    ```bash
+    open index.html  # For macOS
+    start index.html # For Windows
 
 Here is the Overview of the Portfolio Website:
 
