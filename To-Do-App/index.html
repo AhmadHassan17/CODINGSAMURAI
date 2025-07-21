@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="Professional task management with modern design">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="To-Do List">
+</head>
+<body class="dark-theme">
+    <div class="todo-app">
+        <!-- Header with Settings -->
+        <div class="app-header">
+            <h1 class="app-title">To-Do List ✨</h1>
+            <div class="header-controls">
+                <button id="themeToggle" class="theme-toggle" title="Toggle Dark/Light Mode">🌙</button>
+                <button id="viewToggle" class="view-toggle" title="Switch View Mode">📋</button>
+                <button id="settingsBtn" class="settings-btn" title="Settings">⚙️</button>
+            </div>
+        </div>
+        
+        <!-- Keyboard Shortcuts Help -->
+        <div id="shortcutsModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>⌨️ Keyboard Shortcuts</h3>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-item"><kbd>Ctrl+N</kbd><span>New Task</span></div>
+                    <div class="shortcut-item"><kbd>Ctrl+F</kbd><span>Search</span></div>
+                    <div class="shortcut-item"><kbd>Ctrl+E</kbd><span>Export</span></div>
+                    <div class="shortcut-item"><kbd>Ctrl+I</kbd><span>Import</span></div>
+                    <div class="shortcut-item"><kbd>?</kbd><span>Show Shortcuts</span></div>
+                    <div class="shortcut-item"><kbd>Esc</kbd><span>Close Modal</span></div>
+                    <div class="shortcut-item"><kbd>Enter</kbd><span>Add/Save Task</span></div>
+                    <div class="shortcut-item"><kbd>Delete</kbd><span>Delete Selected</span></div>
+                </div>
+                <button onclick="closeModal('shortcutsModal')" class="close-modal">Close</button>
+            </div>
+        </div>
+
+        <!-- Task Templates Modal -->
+        <div id="templatesModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>📋 Task Templates</h3>
+                <div class="templates-grid">
+                    <div class="template-item" data-template="daily-routine">
+                        <h4>🌅 Daily Routine</h4>
+                        <p>Morning routine tasks</p>
+                    </div>
+                    <div class="template-item" data-template="project-launch">
+                        <h4>🚀 Project Launch</h4>
+                        <p>Complete project checklist</p>
+                    </div>
+                    <div class="template-item" data-template="weekly-review">
+                        <h4>📊 Weekly Review</h4>
+                        <p>Weekly planning tasks</p>
+                    </div>
+                    <div class="template-item" data-template="custom">
+                        <h4>➕ Create Custom</h4>
+                        <p>Build your own template</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('templatesModal')" class="close-modal">Close</button>
+            </div>
+        </div>
+
+        <!-- Search and Controls Bar -->
+        <div class="controls-bar">
+            <div class="search-section">
+                <input type="text" id="searchInput" placeholder="🔍 Search tasks... (Ctrl+F)" class="search-input">
+                <button id="clearSearch" class="clear-search" style="display: none;">✕</button>
+            </div>
+            <div class="filter-section">
+                <select id="filterSelect" class="filter-select">
+                    <option value="all">All Tasks</option>
+                    <option value="today">Today's Tasks</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="recurring">Recurring</option>
+                </select>
+                <select id="sortSelect" class="sort-select">
+                    <option value="created">Sort by Created</option>
+                    <option value="priority">Sort by Priority</option>
+                    <option value="dueDate">Sort by Due Date</option>
+                    <option value="alphabetical">Sort A-Z</option>
+                    <option value="timeEstimate">Sort by Time</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button onclick="showModal('templatesModal')" class="template-btn" title="Task Templates">📋</button>
+                <button onclick="exportTasks()" class="export-btn" title="Export tasks (Ctrl+E)">📤</button>
+                <label for="importFile" class="import-btn" title="Import tasks (Ctrl+I)">📥</label>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importTasks(event)">
+            </div>
+        </div>
+
+        <!-- Task Input Fields Section -->
+        <div class="input-section">
+            <div class="task-input-group">
+                <input type="text" id="taskInput" placeholder="✨ Add something amazing to do... (Ctrl+N)" class="task-input">
+                <select id="categorySelect" class="category-select">
+                    <option value="" disabled selected>📁 Category</option>
+                    <option value="personal">📋 Personal</option>
+                    <option value="work">💼 Work</option>
+                    <option value="shopping">🛒 Shopping</option>
+                    <option value="health">🏥 Health</option>
+                    <option value="home">🏠 Home</option>
+                    <option value="other">📌 Other</option>
+                </select>
+                <select id="prioritySelect" class="priority-select">
+                    <option value="" disabled selected>🎯 Priority</option>
+                    <option value="low">🟢 Low</option>
+                    <option value="medium">🟡 Medium</option>
+                    <option value="high">🔴 High</option>
+                </select>
+                <input type="date" id="dueDateInput" class="date-input" title="Due date">
+                <input type="number" id="timeEstimate" class="time-input" placeholder="⏱️ Minutes" min="1" title="Time estimate">
+                <select id="recurringSelect" class="recurring-select">
+                    <option value="">🔁 Recurring</option>
+                    <option value="daily">📅 Daily</option>
+                    <option value="weekly">📅 Weekly</option>
+                    <option value="monthly">📅 Monthly</option>
+                    <option value="yearly">📅 Yearly</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Add Magic Button Section -->
+        <div class="add-button-section">
+            <button onclick="addTask()" class="add-btn">🚀 Add Magic</button>
+        </div>
+
+        <!-- Advanced Options Toggle -->
+        <button id="toggleAdvanced" class="toggle-advanced">➕ Advanced Options</button>
+        
+        <!-- Advanced Task Input -->
+        <div class="advanced-input" id="advancedInput" style="display: none;">
+            <div class="notes-section">
+                <textarea id="taskNotes" placeholder="📝 Add notes, links, or detailed description..." class="task-notes"></textarea>
+                <div class="notes-toolbar">
+                    <button onclick="formatText('bold')" title="Bold">**B**</button>
+                    <button onclick="formatText('italic')" title="Italic">*I*</button>
+                    <button onclick="formatText('link')" title="Link">🔗</button>
+                    <button onclick="formatText('list')" title="List">• List</button>
+                </div>
+            </div>
+            <div class="attachments-section">
+                <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.txt" style="display: none;">
+                <button onclick="document.getElementById('fileInput').click()" class="attach-btn">📎 Attach Files</button>
+                <div id="attachmentsList" class="attachments-list"></div>
+            </div>
+            <div class="tags-section">
+                <input type="text" id="customTags" placeholder="#work #urgent #waiting (space-separated)" class="tags-input">
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats" id="quickStats">
+            <div class="stat-item" onclick="filterByStatus('all')">
+                <span class="stat-number" id="totalTasks">0</span>
+                <span class="stat-label">Total</span>
+            </div>
+            <div class="stat-item" onclick="filterByStatus('today')">
+                <span class="stat-number" id="todayTasks">0</span>
+                <span class="stat-label">Today</span>
+            </div>
+            <div class="stat-item" onclick="filterByStatus('overdue')">
+                <span class="stat-number" id="overdueTasks">0</span>
+                <span class="stat-label">Overdue</span>
+            </div>
+            <div class="stat-item" onclick="filterByStatus('completed')">
+                <span class="stat-number" id="completedTasks">0</span>
+                <span class="stat-label">Done</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalTime">0</span>
+                <span class="stat-label">Hours</span>
+            </div>
+        </div>
+
+        <!-- View Mode Indicator -->
+        <div class="view-indicator">
+            <span id="currentView">📋 List View</span>
+            <span class="view-hint">Press V to switch views</span>
+        </div>
+
+        <!-- Tasks Container -->
+        <div id="tasksContainer">
+            <div class="empty-state" id="emptyState">
+                🎯 Ready to conquer the day? Add your first task above! 🌟
+                <div class="empty-actions">
+                    <button onclick="showModal('templatesModal')" class="empty-template-btn">📋 Use Template</button>
+                    <button onclick="document.getElementById('taskInput').focus()" class="empty-add-btn">➕ Add Task</button>
+                </div>
+            </div>
+            
+            <!-- List View -->
+            <ul class="tasks-list" id="tasksList" style="display: none;"></ul>
+            
+            <!-- Board View (Kanban) -->
+            <div class="board-view" id="boardView" style="display: none;">
+                <div class="board-column" data-status="pending">
+                    <h3>📋 To Do</h3>
+                    <div class="board-tasks" id="pendingTasks"></div>
+                </div>
+                <div class="board-column" data-status="in-progress">
+                    <h3>🔄 In Progress</h3>
+                    <div class="board-tasks" id="progressTasks"></div>
+                </div>
+                <div class="board-column" data-status="completed">
+                    <h3>✅ Completed</h3>
+                    <div class="board-tasks" id="completedTasksBoard"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Legend -->
+        <div class="category-legend" id="categoryLegend" style="display: none;">
+            <h3>📁 Categories</h3>
+            <div class="legend-items">
+                <span class="legend-item personal" onclick="filterByCategory('personal')">📋 Personal</span>
+                <span class="legend-item work" onclick="filterByCategory('work')">💼 Work</span>
+                <span class="legend-item shopping" onclick="filterByCategory('shopping')">🛒 Shopping</span>
+                <span class="legend-item health" onclick="filterByCategory('health')">🏥 Health</span>
+                <span class="legend-item home" onclick="filterByCategory('home')">🏠 Home</span>
+                <span class="legend-item other" onclick="filterByCategory('other')">📌 Other</span>
+            </div>
+        </div>
+
+        <!-- Notification Container -->
+        <div id="notificationContainer" class="notification-container"></div>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="install-prompt" style="display: none;">
+        <div class="install-content">
+            <h3>📱 Install as App</h3>
+            <p>Install this app on your device for the best experience!</p>
+            <div class="install-buttons">
+                <button id="installBtn" class="install-btn">Install</button>
+                <button id="dismissInstall" class="dismiss-btn">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
